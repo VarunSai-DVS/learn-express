@@ -51,6 +51,26 @@ app.post('/write/adduser', (req, res) => {
   res.send('done');
 })
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/read/username', addMsgToRequest);
+app.get('/read/username/:name', (req, res) => {
+  let targetUserName = req.params.name;
+  console.log(targetUserName);
+  let found = false;
+  req.users.forEach((user) => {
+    if (user.username === targetUserName) {
+      res.send([user]);
+      found = true;
+    }
+  })
+  if (!found) {
+    res.send({error: {
+        message: "Not Found", status: 404
+      }});
+  }
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
